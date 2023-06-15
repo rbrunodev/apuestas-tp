@@ -1,4 +1,5 @@
 from passlib.hash import ldap_pbkdf2_sha256
+from matplotlib import pyplot as plt
 
 def generar_encripcion(password) -> str:
     cryppass = ldap_pbkdf2_sha256.hash(password)
@@ -33,6 +34,16 @@ def crear_credenciales() -> None:
     #En esta linea se abre el comando writeline para dejar registro de los datos de la cuenta creada.
     #Finalmente en esta linea se cierra el archivo.
 def mostrar_graficos() -> None:
+    equipo = "equipo1"
+    x1 = [0,10,20,30,40,50,60,70,80,90] #Minutos jugados de un partido x
+    y1 = [0,0,0,1,1,1,2,2,2,2] #Número de goles por cada minuto graficado.
+    plt.step(x1, y1, label=equipo, linewidth=1, color="red")
+    plt.title(f"Goles por minuto de {equipo}.")
+    plt.xlabel("Minutos jugados.")
+    plt.ylabel("Goles realizados.")
+    plt.rcParams['toolbar'] = 'None'
+    plt.legend()
+    plt.show()
     print()
 def main():
     print("\nBienvenido a Jugarsela!!!")
