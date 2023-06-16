@@ -1,3 +1,4 @@
+import csv
 from passlib.hash import ldap_pbkdf2_sha256
 from matplotlib import pyplot as plt
 
@@ -5,17 +6,24 @@ def generar_encripcion(password) -> str:
     cryppass = ldap_pbkdf2_sha256.hash(password)
     print(cryppass)
     return cryppass
-def buscar_credenciales(user,password) -> None:
-    #Acá va la linea para abrir el archivo, leerlo y verificar la existencia de ciertos datos.
-    user = input("Ingrese un nuevo de usuario: ")
-    #while user not in users.info.csv:
-        #id = input("Este usuario ya se encuentra asociado a una cuenta existente. Por favor, ingrese un nuevo usuario: ")
-    password = input("Ingrese una contraseña: ")
-    cryppass = generar_encripcion(password)
-    while password == "" or len(password) < 4: #or cryppass not in usersinfo:
-        password = input("La contraseña no es correcta, por favor, vuelva a ingresar la contraseña: ")
+def buscar_credenciales(user_dict) -> str:
+    search_user = []
+    search_password = []
+    for users in user_dict:
+        search_user.append(user_dict[users][0])
+    for passwords in user_dict:
+        search_password.append(user_dict[passwords][1])
+    print(search_user)
+    print(search_password)
+    user = input("Ingrese su nombre de usuario: ")
+    while user == "" or user not in search_user:
+        user = input("Usuario inexistente. Ingrese su nombre de usuario: ")
+    cryppass = generar_encripcion(input("Ingrese una contraseña: "))
+    while cryppass == ""  or cryppass not in search_password:
+        cryppass = generar_encripcion(input("La contraseña no es correcta, por favor, vuelva a ingresar la contraseña: "))
     print(f"Bienvenido {user}!!!")
-def crear_credenciales() -> None:
+    return user
+def crear_credenciales(user_dict) -> None:
     #Acá va la linea para abrir el archivo, leerlo y verificar la existencia de ciertos datos.
     id = input("Ingrese su correo electrónico: ")
     #while id in users.info.csv:
@@ -46,19 +54,26 @@ def mostrar_graficos() -> None:
     plt.show()
     print()
 def main():
+    users_dict = {}
+    with open("users_info.csv",newline='',encoding='UTF-8') as user_info:
+        csv_reader = csv.reader(user_info)
+        next(csv_reader)
+        for line in user_info:
+            id, user, password, moneyspend, lastgamble, num = line.split(',')
+            balance = num.split("\r\n")
+            balance = balance[0]
+            users_dict[id] = [user,password,moneyspend,lastgamble,balance]
+        user_info.close()
     print("\nBienvenido a Jugarsela!!!")
     choice = input("\nDigite:\n'i' si desea ingresar a una cuenta existente,\n'r' si desea registrar una cuenta nueva,\n'Enter' si desea salir. ")
-    while choice != "" and choice is str:
+    while choice != "" and choice is not str:
         choice.lower()
         if choice == "i":
             print("ingreso a cuenta existente.\n")
-            user = input("Ingrese su usuario: ")
-            password = input("Ingrese su contraseña: ")
-            buscar_credenciales(user,password)
+            user_online = buscar_credenciales(users_dict)
         if choice == "r":
             print("Registro de cuenta nueva.\n")
-            crear_credenciales()
+            crear_credenciales(users_dict)
         else:
             break
-
 main()
