@@ -321,12 +321,12 @@ def mas_gano(lista: dict):
 
 def main():
 
-    diccionario_id = {"River Plate": 435, "Talleres": 456, "San Lorenzo": 460, "Estudiantes LP": 450, "Rosario Central": 437,
-                      "Defensa y Justicia": 442, "Lanus": 446, "Belgrano": 440, "Argentinos Juniors": 458, "Godoy Cruz": 439,
-                      "Boca Juniors": 451, "Newells Old Boys": 457, "Club Atletico Platense": 1064, "Sarmiento": 474,
-                      "Gimnasia LP": 434, "Central Cordoba de Santiago": 1065, "Colon": 448, "Racing Club": 436,
-                      "Barracas Central": 2432, "Tigre": 452, "Instituto": 478, "Independiente": 453, "Atletico Tucuman": 455,
-                      "Union de Santa Fe": 441, "Velez Sarfield": 438, "Huracan": 445, "Banfield": 449, "Arsenal de Sarandi": 459}
+    diccionario_id = {"RIVER PLATE": 435, "TALLERES": 456, "SAN LORENZO": 460, "ESTUDIANTES LP": 450, "ROSARIO CENTRAL": 437,
+                      "DEFENSA Y JUSTICIA": 442, "LANUS": 446, "BELGRANO": 440, "ARGENTINOS JUNIORS": 458, "GODOY CRUZ": 439,
+                      "BOCA JUNIORS": 451, "NEWELLS OLD BOYS": 457, "PLATENSE": 1064, "SARMIENTO": 474,
+                      "GIMNASIA LP": 434, "CENTRAL CORDOBA DE SANTIAGO DEL ESTERO": 1065, "COLON": 448, "RACING CLUB": 436,
+                      "BARRACAS CENTRAL": 2432, "TIGRE": 452, "INSTITUTO": 478, "INDEPENDIENTE": 453, "ATLETICO TUCUMAN": 455,
+                      "UNION DE SANTA FE": 441, "VELEZ SARFIELD": 438, "HURACAN": 445, "BANFIELD": 449, "ARSENAL DE SARANDI": 459}
 
     
 
