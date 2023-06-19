@@ -16,10 +16,15 @@ diccionario_id = {"RIVER PLATE": 435, "TALLERES": 456, "SAN LORENZO": 460, "ESTU
                       "BARRACAS CENTRAL": 2432, "TIGRE": 452, "INSTITUTO": 478, "INDEPENDIENTE": 453, "ATLETICO TUCUMAN": 455,
                       "UNION DE SANTA FE": 441, "VELEZ SARFIELD": 438, "HURACAN": 445, "BANFIELD": 449, "ARSENAL DE SARANDI": 459}
 
-def generar_encripcion(password) -> str:
+def verificar_contraseña(password,passlist) -> bool:
 
-    #copia el código del archivo hashing_test
-    print("Función en mantenimiento...")
+    for i in range(0,len(passlist)):
+        lock = context.verify(password, passlist[i])
+        if lock is False:
+            pass
+        elif lock is True: 
+            break
+    return lock
 
 def buscar_credenciales(user_dict) -> str:
 
@@ -35,8 +40,10 @@ def buscar_credenciales(user_dict) -> str:
     while user == "" or user not in search_user:
         user = input("Usuario inexistente. Ingrese su nombre de usuario: ")
     cryppass = input("Ingrese su contraseña: ")
-    while cryppass == ""  or cryppass not in search_password:
-        cryppass = generar_encripcion(input("La contraseña no es correcta, por favor, vuelva a ingresar la contraseña: "))
+    lock = verificar_contraseña(cryppass,search_password)
+    while cryppass == ""  or lock is False:
+        cryppass = input("La contraseña no es correcta, por favor, vuelva a ingresar la contraseña: ")
+        lock = verificar_contraseña(cryppass,search_password)
     print()
     print(f"Bienvenido {user}!!!")
     print()
@@ -57,13 +64,14 @@ def crear_credenciales(user_dict) -> None:
     password = input("Ingrese una contraseña: ")
     while password == "" or len(password) < 4:
         password = input("La contraseña debe ser de un mínimo de 4 caracteres, por favor, ingrese una nueva contraseña: ")
+    password = context.hash(password)
     moneyspend = 0
     lastgamble = 00000000
     balance = 0
     user_dict[id] = [user,password,moneyspend,lastgamble,balance]
     with open("users_info.csv", "a") as users_info:
         new_user = (f"{id},{user},{password},{moneyspend},{lastgamble},{balance}")
-        users_info.write(new_user)
+        users_info.write(f"\n{new_user}")
     users_info.close()
 
 def pedir_equipo(diccionario:dict) -> str:
@@ -128,25 +136,28 @@ def main():
     choice1 = input("\nDigite:\n'i' si desea ingresar a una cuenta existente,\n'r' si desea registrar una cuenta nueva,\n'Enter' si desea salir. ")
     while choice1 == "i" or choice1 == "r":
         choice1.lower()
-        if choice1 == "i":
-            print("ingreso a cuenta existente.\n")
-            user_online = buscar_credenciales(users_dict) #Almaceno el usuario conectado para tomarlo de referencia en operaciones posteriores.
-            pass
-        elif choice1 == "r":
+        if choice1 == "r":
             print("Registro de cuenta nueva.\n")
             crear_credenciales(users_dict)
             choice1 = input("\nDigite:\n'i' si desea ingresar a una cuenta existente,\n'r' si desea registrar una cuenta nueva,\n'Enter' si desea salir. ")
-        print("1. Mostrar goles por minutos(g).")
-        choice2 = input("¿Que desea hacer? ")
-        while choice2 == "g":
-            if choice2 == "g":
-                equipos = sorted(list(diccionario_id.keys()))
-                for equipo in equipos:
-                    print(equipo)
-                print()
-                equipo = pedir_equipo(diccionario_id)
-                goals_x_min(equipo,diccionario_id)
-                choice2 = input("¿Que desea hacer?")
+        elif choice1 == "i":
+            print("ingreso a cuenta existente.\n")
+            user_online = buscar_credenciales(users_dict) #Almaceno el usuario conectado para tomarlo de referencia en operaciones posteriores.
+            if user_online != "":
+                break
+    
+    print("1. Mostrar goles por minutos(g).")
+    choice2 = input("¿Que desea hacer? ")
+    while choice2 == "g":
+        if choice2 == "g":
+            equipos = sorted(list(diccionario_id.keys()))
+            for equipo in equipos:
+                print(equipo)
+            print()
+            equipo = pedir_equipo(diccionario_id)
+            goals_x_min(equipo,diccionario_id)
+            choice2 = input("¿Que desea hacer?")
+    
     else:
         print("Hasta pronto!!!")
 
