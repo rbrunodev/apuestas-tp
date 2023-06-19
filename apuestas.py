@@ -58,7 +58,7 @@ def crear_credenciales(user_dict) -> None:
     while password == "" or len(password) < 4:
         password = input("La contraseña debe ser de un mínimo de 4 caracteres, por favor, ingrese una nueva contraseña: ")
     moneyspend = 0
-    lastgamble = 0
+    lastgamble = 00000000
     balance = 0
     user_dict[id] = [user,password,moneyspend,lastgamble,balance]
     with open("users_info.csv", "a") as users_info:
