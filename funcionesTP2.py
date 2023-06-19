@@ -254,8 +254,9 @@ def leer_archivo_usuarios(archivo):
 
     return diccionario
 
-def escribir_archivo(diccionario: dict, archivo_nuevo):
+def escribir_archivo_dict(diccionario: dict, archivo_nuevo):
     #escribe un nuevo archivo .csv con los datos de un diccionario
+    #usar para usuarios.csv
 
     with open(archivo_nuevo, 'w', newline="") as archivo:
         escritor = csv.writer(archivo)
@@ -263,14 +264,14 @@ def escribir_archivo(diccionario: dict, archivo_nuevo):
             linea = [clave] + valores
             escritor.writerow(linea)
 
-def cargar_dinero(diccionario: dict, usuario: str) -> dict:
-    #recibe el diccionario proveniente del archivo y el usuario, y devuelve el mismo diccionario con el nuevo monto de dinero disponible
+def cargar_dinero(usuarios: dict, usuario: str) -> dict:
+    #recibe el diccionario proveniente del archivo usuarios y el usuario, y devuelve el mismo diccionario con el nuevo monto de dinero disponible
 
     ingreso = int(input("Ingrese el monto a ingresar: "))
 
-    for user in diccionario:
-        if diccionario[user][0] == usuario:
-            diccionario[user][4] += ingreso
+    for user in usuarios:
+        if usuarios[user][0] == usuario:
+            usuarios[user][4] += ingreso
 
     print("Dinero cargado correctamente")
 
@@ -318,6 +319,14 @@ def mas_gano(lista: dict):
     lista_ord = sorted(lista_aux, key=lambda x: x[1], reverse=True)
 
     print(f"El usuario que mas gano es {lista_ord[0][0]} ({lista_ord[0][1]} veces)")
+
+def escribir_archivo_list(lista: list, archivo_nuevo):
+    #escribe un nuevo archivo .csv con los datos de una lista de listas
+    #usar para generar transacciones.csv
+
+    with open(archivo_nuevo, 'w', newline="") as archivo:
+        escritor = csv.writer(archivo)
+        escritor.writerow(lista)
 
 def main():
 
