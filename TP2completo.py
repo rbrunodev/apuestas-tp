@@ -26,6 +26,7 @@ def verificar_contraseña(password,passlist) -> bool:
 
 def buscar_credenciales(user_dict) -> str:
 
+    '''Toma datos del diccionario de usuarios y devuelve una variable con el usuario que inició sesión.'''
     search_user = []
     search_password = []
     for users in user_dict:
@@ -48,6 +49,8 @@ def buscar_credenciales(user_dict) -> str:
 
 def crear_credenciales(user_dict) -> None:
 
+    '''Solicito el diccionario de usuarios para comparar datos existentes, 
+    agrego dicho usuario al diccionario y al arhivo csv.'''
     search_id = sorted(list(user_dict.keys()))
     search_user = []
     for users in user_dict:
@@ -73,6 +76,7 @@ def crear_credenciales(user_dict) -> None:
 
 def pedir_equipo(diccionario:dict) -> str:
 
+    '''Utilizo el diccionario de equipos para validar la elección del usuario, devuelvo su nombre con un str.'''
     equipos = diccionario.keys()
     eleccion = input("Ingrese el equipo de la manera en la que se muestra en la lista: ")
     eleccion = eleccion.upper()
@@ -84,8 +88,9 @@ def pedir_equipo(diccionario:dict) -> str:
 
     return eleccion
 
-def listar_equipos(diccionario: dict):
+def listar_equipos(diccionario: dict) -> None:
 
+    '''Solicito el diccionario con los equipos existentes para imprimir una lista de opciones para el usuario.'''
     equipos = sorted(list(diccionario.keys()))
     print("EQUIPOS LPF 2023:")
     print(" ")
@@ -362,6 +367,7 @@ def escribir_archivo_list(lista: list, archivo_nuevo):
 
 def goals_x_min(team: str, diccionario: dict) -> None:
 
+    '''Pido el nombre del equipo y el diccionario con los ids de equipos para imprimir el gráfico solicitado.'''
     conn = http.client.HTTPSConnection("v3.football.api-sports.io")
 
     headers = {
@@ -385,6 +391,8 @@ def goals_x_min(team: str, diccionario: dict) -> None:
         if goal_info['total'] is not None:
             minutes.append(int(minute.split('-')[0]))
             goals.append(goal_info['total'])
+
+    plt.rcParams['toolbar'] = 'None'
 
     plt.step(minutes, goals, where='post')
     plt.xlabel('Minutos')
