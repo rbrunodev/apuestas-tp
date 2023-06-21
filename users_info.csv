@@ -1,0 +1,10 @@
+id,username,password,moneyspend,lastgamble,balance
+user1@gmail.com,User1,$pbkdf2-sha256$30000$q1XK.f./VypF6J3TmrO21g$OVL6.uasPz6133x9lYuFBKekOCSpCsyzKRtXh8EIPxU,0,00000000,0
+user2@gmail.com,User2,$pbkdf2-sha256$30000$DsGYc.59L2WMkRKiNGas1Q$Lff3dIWn5ROwbOpBOXx6K1sYWE.ie4V1jVr4PhGa8eA,0,00000000,0
+user3@gmail.com,User3,$pbkdf2-sha256$30000$k9K6t5ZS6p3znlMqpZTyXg$pXTgYPXk/H2L8ecp9mw1iAD2/X8b5fEaKbam57Rgb2M,0,00000000,0
+user4@gmail.com,User4,$pbkdf2-sha256$30000$3DvnvBcCIOQcg9Aa43yvNQ$hVggY9f5tCgGs4j5eVoKEEZ3cZFOr8Yzj/SibH.0SMc,0,00000000,0
+user5@gmail.com,User5,$pbkdf2-sha256$30000$as05Z.w9R6g1JoTQmrO2Vg$Gh01X2Lhv6EjluI0bpAdzfery9729BZcCdhblsb5TaA,0,00000000,0
+user6@gmail.com,User6,$pbkdf2-sha256$30000$0hrjXEuJcU5pjfHeO0cI4Q$kEBNS2zgs.Kf1gcG.jO9qRHUkEdF1klswPyXESsUBZM,0,00000000,0
+user7@gmail.com,User7,$pbkdf2-sha256$30000$6L23ljKmNOZ8j5HyvjfmHA$GMN9D6v9ug67UOxWv4DlDyjbHwCRaNMf1zTp11yv..8,0,00000000,0
+user8@gmail.com,User8,$pbkdf2-sha256$30000$P2es1br33hvDuFdqTcm5lw$CItD6jtLeM18/vO7FY38MJtkf.639lmETSTuGrAvj9U,0,00000000,0
+user9@gmail.com,User9,$pbkdf2-sha256$30000$5pxz7h0jRAihNMY4p9T6fw$T22vESHwDRFUlrYL6FnQwIoVcN/BI4xqhUVPWUnp55Y,0,00000000,0
