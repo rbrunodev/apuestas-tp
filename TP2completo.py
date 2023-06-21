@@ -15,7 +15,7 @@ context =   CryptContext(
 
 
 def verificar_contraseña(password,passlist) -> bool:
-
+    '''Toma la contraseña ingresada, más una lista de las contraseñas de usuarios, para compararlas y devolver un booleano.'''
     for i in range(0,len(passlist)):
         lock = context.verify(password, passlist[i])
         if lock is False:
