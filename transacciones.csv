@@ -1,3 +1,6 @@
 idEmail,fecha,tipo,importe
-pruba@mail.com,hoy,Pierde,-400
-pruba@mail.com,hoy,Pierde,-400
+user1@gmail.com,20230205,Pierde,-400
+user9@gmail.com,20230210,Pierde,-400
+user5@gmail.com,20230514,Gana,1500
+user7@gmail.com,20230601,Gana,1500
+user5@gmail.com,20230620,Gana,2000

@@ -14,34 +14,33 @@ context = CryptContext(
     pbkdf2_sha256__default_rounds = 30000
 )
 
-def verificar_contraseña(password:str, passlist:list) -> bool:
-    '''Toma la contraseña ingresada, más una lista de las contraseñas de usuarios, para compararlas y devolver un booleano.'''
-    for i in range(0,len(passlist)):
-        lock = context.verify(password, passlist[i])
-        if lock is False:
-            pass
-        elif lock is True: 
-            break
+def verificar_contraseña(password:str, cryppass:str) -> bool:
+    '''Toma la contraseña ingresada y la contraseña del usuario al que se desea acceder, devolviendo un booleano.'''
+    lock = context.verify(password, cryppass)
+
     return lock
 
 def buscar_credenciales(user_dict:dict) -> str:
     '''Toma datos del diccionario de usuarios y devuelve una variable con el usuario que inició sesión.'''
-
+    search_id = list(user_dict.keys())
     search_user = []
-    search_password = []
+
     for users in user_dict:
         search_user.append(user_dict[users][0])
-    for passwords in user_dict:
-        search_password.append(user_dict[passwords][1])
-   
+    
     user = input("Ingrese su nombre de usuario: ")
     while user == "" or user not in search_user:
         user = input("Usuario inexistente. Ingrese su nombre de usuario: ")
-    cryppass = input("Ingrese su contraseña: ")
-    lock = verificar_contraseña(cryppass,search_password)
+    
+    x = search_user.index(user)
+    user_id = search_id[x]
+    cryppass = user_dict[user_id][1]
+    password = input("Ingrese su contraseña: ")
+    lock = verificar_contraseña(password,cryppass)
     while cryppass == ""  or lock is False:
-        cryppass = input("La contraseña no es correcta, por favor, vuelva a ingresar la contraseña: ")
-        lock = verificar_contraseña(cryppass,search_password)
+        print()
+        password = input("La contraseña no es correcta, por favor, vuelva a ingresar la contraseña: ")
+        lock = verificar_contraseña(password,cryppass)
     print()
     print(f"Bienvenido {user}!!!")
     print()
@@ -73,6 +72,7 @@ def crear_credenciales(user_dict:dict) -> None:
         new_user = (f"{id},{user},{password},{moneyspend},{lastgamble},{balance}")
         users_info.write(f"\n{new_user}")
 
+    return user
 
 def pedir_equipo(diccionario:dict) -> str:
     '''Utilizo el diccionario de equipos para validar la elección del usuario, devuelvo su nombre con un str.'''
@@ -669,19 +669,16 @@ def main():
             users_dict[id] = [user,password,moneyspend,lastgamble,balance]
     
     print("\nBienvenido a Jugarsela!!!")
-    choice1 = input("\nDigite:\n'i' si desea ingresar a una cuenta existente,\n'r' si desea registrar una cuenta nueva,\n'Enter' si desea salir. ")
-    while choice1 == "i" or choice1 == "r":
-        choice1.lower()
-        if choice1 == "r":
-            print("Registro de cuenta nueva.\n")
-            crear_credenciales(users_dict)
-            choice1 = input("\nDigite:\n'i' si desea ingresar a una cuenta existente,\n'r' si desea registrar una cuenta nueva,\n'Enter' si desea salir. ")
-            #faltaria agregar el "login" para tener la variable user_online
-        elif choice1 == "i":
-            print("ingreso a cuenta existente.\n")
-            user_online = buscar_credenciales(users_dict) #Almaceno el usuario conectado para tomarlo de referencia en operaciones posteriores.
-            if user_online != "":
-                break
+    choice1 = input("\nDigite:\n'i' si desea ingresar a una cuenta existente,\n'r' si desea registrar una cuenta nueva: ")
+    choice1.lower()
+    while choice1 != "i" and choice1 != "r":
+        choice1 = input("\nDigite:\n'i' si desea ingresar a una cuenta existente,\n'r' si desea registrar una cuenta nueva: ")
+    if choice1 == "r":
+        print("Registro de cuenta nueva.\n")
+        user_online = crear_credenciales(users_dict)
+    elif choice1 == "i":
+        print("ingreso a cuenta existente.\n")
+        user_online = buscar_credenciales(users_dict) #Almaceno el usuario conectado para tomarlo de referencia en operaciones posteriores.
 
     equipos = {
         "RIVER PLATE": 435, "TALLERES": 456, "SAN LORENZO": 460, "ESTUDIANTES LP": 450, "ROSARIO CENTRAL": 437,
