@@ -7,6 +7,7 @@ import http.client
 import urllib.request
 import os
 import random
+import datetime
 
 context = CryptContext(
     schemes = ["pbkdf2_sha256"],
@@ -565,7 +566,8 @@ def guardar_transacciones(usuario:str, dinero:int, tipo:str)->None:
             for fila in leer:
                 datos.append(fila)
             
-    fila = [usuario, 'hoy', tipo, dinero]
+    fecha_hoy = datetime.datetime.now().strftime("%Y%m%d")
+    fila = [usuario, fecha_hoy, tipo, dinero]
     datos.append(fila)
 
     with open('transacciones.csv', 'w', newline='') as archivo:
@@ -657,39 +659,12 @@ def listado_fixture(equipo: str, fixtures:dict, equipos:dict)->None:
             count += 1
         print("************************************************")
 
-def main():
-    users_dict = {}
-    with open("users_info.csv",newline='',encoding='UTF-8') as user_info:
-        csv_reader = csv.reader(user_info)
-        next(csv_reader)
-        for line in user_info:
-            id, user, password, moneyspend, lastgamble, num = line.split(',')
-            balance = num.split("\r\n")
-            balance = balance[0]
-            users_dict[id] = [user,password,moneyspend,lastgamble,balance]
-    
-    print("\nBienvenido a Jugarsela!!!")
-    choice1 = input("\nDigite:\n'i' si desea ingresar a una cuenta existente,\n'r' si desea registrar una cuenta nueva: ")
-    choice1.lower()
-    while choice1 != "i" and choice1 != "r":
-        choice1 = input("\nDigite:\n'i' si desea ingresar a una cuenta existente,\n'r' si desea registrar una cuenta nueva: ")
-    if choice1 == "r":
-        print("Registro de cuenta nueva.\n")
-        user_online = crear_credenciales(users_dict)
-    elif choice1 == "i":
-        print("ingreso a cuenta existente.\n")
-        user_online = buscar_credenciales(users_dict) #Almaceno el usuario conectado para tomarlo de referencia en operaciones posteriores.
+def validar_opciones(opcion:str)->bool:
+    '''Recibe la opcion y valida que este dentro de las opciones permitidas, devuelve True o False'''
+    return opcion in ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
 
-    equipos = {
-        "RIVER PLATE": 435, "TALLERES": 456, "SAN LORENZO": 460, "ESTUDIANTES LP": 450, "ROSARIO CENTRAL": 437,
-        "DEFENSA Y JUSTICIA": 442, "LANUS": 446, "BELGRANO": 440, "ARGENTINOS JUNIORS": 458, "GODOY CRUZ": 439,
-        "BOCA JUNIORS": 451, "NEWELLS OLD BOYS": 457, "PLATENSE": 1064, "SARMIENTO": 474,
-        "GIMNASIA LP": 434, "CENTRAL CORDOBA DE SANTIAGO DEL ESTERO": 1065, "COLON": 448, "RACING CLUB": 436,
-        "BARRACAS CENTRAL": 2432, "TIGRE": 452, "INSTITUTO": 478, "INDEPENDIENTE": 453, "ATLETICO TUCUMAN": 455,
-        "UNION DE SANTA FE": 441, "VELEZ SARFIELD": 438, "HURACAN": 445, "BANFIELD": 449, "ARSENAL DE SARANDI": 459
-    }
-
-
+def imprimir_opciones_menu()->str:
+    '''Imprime el menu y devuelve un str con la opcion elegida por el usuario'''
     menu = """
     MENU
     
@@ -704,40 +679,76 @@ def main():
     i. Salir
     
     """
-
     print(menu)
 
-    opciones = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
     opcion = input("Ingrese una opcion: ")
-
-    while opcion not in opciones:
+    while (validar_opciones(opcion) == False):
+        print("La opcion ingresada no se encuentra dentro del listado. Por favor, ingrese una opcion valida")
         opcion = input("Ingrese una opcion valida: ")
+
+    return opcion.upper()
+
+def procesar_usuarios(users_dict:dict)->None:
+    '''Recibe usuarios vacio y carga los datos en el dict users_dict '''
+    with open("users_info.csv",newline='',encoding='UTF-8') as user_info:
+        csv_reader = csv.reader(user_info)
+        next(csv_reader)
+        for line in user_info:
+            id, user, password, moneyspend, lastgamble, num = line.split(',')
+            balance = num.split("\r\n")
+            balance = balance[0]
+            users_dict[id] = [user,password,moneyspend,lastgamble,balance]
+
+def main():
+    users_dict = {}
+    equipos = {
+        "RIVER PLATE": 435, "TALLERES": 456, "SAN LORENZO": 460, "ESTUDIANTES LP": 450, "ROSARIO CENTRAL": 437,
+        "DEFENSA Y JUSTICIA": 442, "LANUS": 446, "BELGRANO": 440, "ARGENTINOS JUNIORS": 458, "GODOY CRUZ": 439,
+        "BOCA JUNIORS": 451, "NEWELLS OLD BOYS": 457, "PLATENSE": 1064, "SARMIENTO": 474,
+        "GIMNASIA LP": 434, "CENTRAL CORDOBA DE SANTIAGO DEL ESTERO": 1065, "COLON": 448, "RACING CLUB": 436,
+        "BARRACAS CENTRAL": 2432, "TIGRE": 452, "INSTITUTO": 478, "INDEPENDIENTE": 453, "ATLETICO TUCUMAN": 455,
+        "UNION DE SANTA FE": 441, "VELEZ SARFIELD": 438, "HURACAN": 445, "BANFIELD": 449, "ARSENAL DE SARANDI": 459
+    }
+    procesar_usuarios(users_dict)
+    print("\nBienvenido a Jugarsela!!!")
+    choice1 = input("\nDigite:\n'i' si desea ingresar a una cuenta existente,\n'r' si desea registrar una cuenta nueva: ")
+    choice1.lower()
+    while choice1 != "i" and choice1 != "r":
+        choice1 = input("\nDigite:\n'i' si desea ingresar a una cuenta existente,\n'r' si desea registrar una cuenta nueva: ")
     
-    while opcion != "i":
-        if opcion == "a":
+    if choice1 == "r":
+        print("Registro de cuenta nueva.\n")
+        user_online = crear_credenciales(users_dict)
+    elif choice1 == "i":
+        print("ingreso a cuenta existente.\n")
+        user_online = buscar_credenciales(users_dict) #Almaceno el usuario conectado para tomarlo de referencia en operaciones posteriores.
+
+    opcion = imprimir_opciones_menu()
+    while opcion != "I":
+        if opcion == "A":
             listar_equipos(equipos)
             mostrar_equipo(equipos)
-        elif opcion == "b":
+        elif opcion == "B":
             anio = pediranio()
             mostrar_tabla(anio)
-        elif opcion == "c":
+        elif opcion == "C":
             listar_equipos(equipos)
             mostrar_info(equipos)
-        elif opcion == "d":
+        elif opcion == "D":
             listar_equipos(equipos)
             equipo = pedir_equipo(equipos)
             goals_x_min(equipo, equipos)
-        elif opcion == "e":
+        elif opcion == "E":
             usuarios_dict = leer_archivo_usuarios("users_info.csv")
             cargar_dinero(usuarios_dict, user_online)
             escribir_archivo_dict(usuarios_dict, "users_info.csv")
-        elif opcion == "f":   
+        elif opcion == "F":   
             usuarios_dict_1 = leer_archivo_usuarios("users_info.csv")
             mayor_apostado(usuarios_dict_1)            
-        elif opcion == "g":
+        elif opcion == "G":
             transacciones = leer_archivo_transacciones("transacciones.csv")
             mas_gano(transacciones)
-        elif opcion == "h":
+        elif opcion == "H":
             fixtures = {}
             equipo = input("Ingrese el nombre del equipo para conocer el listado del fixture: ")
             while equipo.upper() not in equipos:
@@ -745,16 +756,12 @@ def main():
                 equipo = input("Ingrese el nombre del equipo: ")
 
             listado_fixture(equipo.upper(), fixtures, equipos)
-
             if(len(fixtures) == 0):
                 print("No hay partidos para mostrarle.")
 
             while len(fixtures) > 0: 
                 codigo = elegir_partido(fixtures)
                 apostar_partido(codigo, fixtures, user_online, users_dict)
-        print("")
-        print(menu)
-        print("")
-        opcion = input("Ingrese una opcion: ")
+        opcion = imprimir_opciones_menu()
     print("Gracias!")
 main()
