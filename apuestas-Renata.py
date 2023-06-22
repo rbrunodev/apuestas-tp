@@ -109,8 +109,7 @@ def elegir_partido(fixtures:dict)->int:
 
 def leer_archivo_usuarios()->dict:
     '''Lee el archivo usuarios y devuelve un diccionario con los datos.'''
-    archivo = 'usuarios.csv'
-    #recibe el archivo usuarios.csv y me devuelve sus datos en un diccionario
+    archivo = 'users_info.csv'
     usuarios = {}
     with open(archivo, 'r') as archivo_aux:
         texto = csv.reader(archivo_aux)
@@ -119,7 +118,6 @@ def leer_archivo_usuarios()->dict:
             email = linea[0]
             valores = linea[1:]
             usuarios[email] = valores
-    archivo_aux.close()
 
     return usuarios
 
@@ -146,13 +144,12 @@ def simular_resultado()->str:
 def cargar_dinero_disponible(usuario: str, dinero:int) ->None:
     '''Recibe el id del usuario(mail) y el dinero a cargar.
     Modifica el archivo usuarios para actualizar el monto disponible de ese usuario'''
-    archivo_csv = 'usuarios.csv'
+    archivo_csv = 'users_info.csv'
     datas = []
     with open(archivo_csv, 'r') as archivo:
         leer = csv.reader(archivo)
         for fila in leer:
             datas.append(fila)
-        archivo.close()
     
     for data in datas:
         if(data[0] == usuario):
@@ -161,18 +158,16 @@ def cargar_dinero_disponible(usuario: str, dinero:int) ->None:
     with open(archivo_csv, 'w', newline='') as archivo:
         escribir = csv.writer(archivo)
         escribir.writerows(datas)
-        archivo.close()
 
 def descontar_dinero(usuario:str, monto_descontar:int)->None:
     '''Recibe el id del usuario(mail) y el monto a descontar.
     Modifica el archivo usuarios para actualizar el monto disponible de ese usuario'''
-    archivo_csv = 'usuarios.csv'
+    archivo_csv = 'users_info.csv'
     datas = []
     with open(archivo_csv, 'r') as archivo:
         leer = csv.reader(archivo)
         for fila in leer:
             datas.append(fila)
-        archivo.close()
     
     for data in datas:
         if(data[0] == usuario):
@@ -181,7 +176,6 @@ def descontar_dinero(usuario:str, monto_descontar:int)->None:
     with open(archivo_csv, 'w', newline='') as archivo:
         escribir = csv.writer(archivo)
         escribir.writerows(datas)
-        archivo.close()
 
 def existe_archivo(nombre_archivo:str)->bool:
     '''Recibe el nombre del archivo y devuelve un bool (True/False) si el archivo existe o no.'''
@@ -279,7 +273,7 @@ def apostar_partido(codigo:int, fixtures:dict, usuario: str)->None:
         print("Hemos descontado de su dinero disponible lo apostado.")
         return
     
-def listado_fixture(equipo: str, fixtures:dict, equipos:dict):
+def listado_fixture(equipo: str, fixtures:dict, equipos:dict)->None:
     '''Recibe el nombre de un equipo y devuelve el listado de partidos que debe jugar en el torneo'''
     id_equipo = equipos[equipo]
 
@@ -299,7 +293,6 @@ def listado_fixture(equipo: str, fixtures:dict, equipos:dict):
             print(f"Visitante: {fixture['team_visitor']}, PAGA: {pagos[1]} veces lo apostado")
             count += 1
         print("************************************************")
-    return ''
 
 def main():
     equipos = {
@@ -313,7 +306,7 @@ def main():
     usuario_login = "pruba@mail.com"
     fixtures = {}
     equipo = input("Ingrese el nombre del equipo para conocer el listado del fixture: ")
-    while equipo not in equipos:
+    while equipo.upper() not in equipos:
         print("Debe ingresar el nombre de un equipo de la Liga Profesional 2023")
         equipo = input("Ingrese el nombre del equipo: ")
 
