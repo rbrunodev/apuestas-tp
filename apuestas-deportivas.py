@@ -264,22 +264,21 @@ def mostrar_info(diccionario: dict):
     
 def leer_archivo_usuarios(archivo:str):
     '''Recibe el archivo usuarios.csv y me devuelve sus datos en un diccionario'''
-    diccionario = {}
+    usuarios = {}
     with open(archivo, 'r') as archivo_aux:
         texto = csv.reader(archivo_aux)
         next(texto)
-
         for linea in texto:
-            clave = linea[0]
+            email = linea[0]
             valores = linea[1:]
-            diccionario[clave] = valores
+            usuarios[email] = valores
 
-    for clave in diccionario:
-        diccionario[clave][2] = int(diccionario[clave][2])
-        diccionario[clave][3] = int(diccionario[clave][3])
-        diccionario[clave][4] = int(diccionario[clave][4])
+    for clave in usuarios:
+        usuarios[clave][2] = int(usuarios[clave][2])
+        usuarios[clave][3] = int(usuarios[clave][3])
+        usuarios[clave][4] = int(usuarios[clave][4])
 
-    return diccionario
+    return usuarios
 
 def escribir_archivo_dict(usuarios: dict, archivo_nuevo:str)->None:
     '''Recibe los usuarios y el nombre del archivo donde escribe crea ese archivo.csv con los datos de un diccionario'''
@@ -344,14 +343,6 @@ def mas_gano(lista: dict)->None:
 
     print(f"El usuario que mas gano es {lista_ord[0][0]} ({lista_ord[0][1]} veces)")
 
-# def escribir_archivo_list(lista: list, archivo_nuevo):
-#     #escribe un nuevo archivo .csv con los datos de una lista de listas
-#     #usar para generar transacciones.csv
-
-#     with open(archivo_nuevo, 'w', newline="") as archivo:
-#         escritor = csv.writer(archivo)
-#         escritor.writerow(lista)
-
 def goals_x_min(team: str, diccionario: dict) -> None:
     '''Pido el nombre del equipo y el diccionario con los ids de equipos para imprimir el gráfico solicitado.'''
     conn = http.client.HTTPSConnection("v3.football.api-sports.io")
@@ -396,25 +387,29 @@ def limpiar_consola()->None:
 def pago_apuestas(fixture_id:int, team_local:str)->list:
     '''Recibe el fixture id y el equipo que es local, consulta en la api las predicciones de ese partido y devuelve, 
     segun esos datos, cuanto se le pagara a cada equipo L/V'''
-    prediction = api_predictions_por_fixture(fixture_id)
 
-    winner_name : str = prediction['winner_name']
+    prediction = []
+
+    if(api_predictions_por_fixture(fixture_id)):
+        prediction = api_predictions_por_fixture(fixture_id)
 
     number = random.randint(1, 4)
 
     pay_local = number
     pay_visitor = number
 
-    if(winner_name.upper() == team_local.upper()):
-        if(prediction['win_or_draw']):
-            pay_local = pay_local * 0.1
-        else:
-            pay_visitor = pay_visitor * 0.1
-    else: 
-        if(prediction['win_or_draw']):
-            pay_visitor = pay_visitor * 0.1
-        else:
-            pay_local = pay_local * 0.1
+    if(len(prediction) > 0):
+        winner_name : str = prediction['winner_name']
+        if(winner_name.upper() == team_local.upper()):
+            if(prediction['win_or_draw']):
+                pay_local = pay_local * 0.1
+            else:
+                pay_visitor = pay_visitor * 0.1
+        else: 
+            if(prediction['win_or_draw']):
+                pay_visitor = pay_visitor * 0.1
+            else:
+                pay_local = pay_local * 0.1
     
     return [round(pay_local,1), round(pay_visitor, 1)]
 
@@ -433,8 +428,6 @@ def api_fixture(id_equipo: int, equipo: str, fixtures:dict)->None:
     data_format = json.loads(data_decode)
 
     response : list = data_format['response']
-
-    fixtures = {}
 
     for res in response:
         team_home : str = res['teams']['home']['name']
@@ -465,6 +458,8 @@ def api_predictions_por_fixture(fixture_id : int)->dict:
 
     response : list = data_format['response']
 
+    prediction = {}
+
     for res in response:
         prediction = {
             'winner_id' : res['predictions']['winner']['id'],
@@ -472,7 +467,7 @@ def api_predictions_por_fixture(fixture_id : int)->dict:
             'win_or_draw' : res['predictions']['win_or_draw'],
             'prediction': res['predictions']['advice']
         }
-
+    
     return prediction
 
 def validacion_cod_fixture(codigo:int, fixtures:dict)->bool:
@@ -488,28 +483,11 @@ def elegir_partido(fixtures:dict)->int:
     
     return codigo
 
-def leer_archivo_usuarios()->dict:
-    '''Lee el archivo usuarios y devuelve un diccionario con los datos.'''
-    archivo = 'usuarios.csv'
-    #recibe el archivo usuarios.csv y me devuelve sus datos en un diccionario
-    usuarios = {}
-    with open(archivo, 'r') as archivo_aux:
-        texto = csv.reader(archivo_aux)
-        next(texto)
-        for linea in texto:
-            email = linea[0]
-            valores = linea[1:]
-            usuarios[email] = valores
-    archivo_aux.close()
-
-    return usuarios
-
-def dinero_disponible(usuario:str)->int:
-    '''Recibe el id del usuario (mail) y devuelve el dinero disponible que tiene ese usuario'''
-    usuarios = leer_archivo_usuarios()
+def dinero_disponible(usuario:str, usuarios:dict)->int:
+    '''Recibe el id del usuario (mail) y el dict de usuarios y devuelve el dinero disponible que tiene ese usuario'''
     datos_usuario = usuarios[usuario]
-
-    return datos_usuario[5]
+    
+    return int(datos_usuario[4])
 
 def simular_resultado()->str:
     '''Devuelve una inicial que simula un resultado de partido.'''
@@ -532,7 +510,6 @@ def cargar_dinero_disponible(usuario: str, dinero:int)->None:
         leer = csv.reader(archivo)
         for fila in leer:
             datas.append(fila)
-        archivo.close()
     
     for data in datas:
         if(data[0] == usuario):
@@ -541,7 +518,6 @@ def cargar_dinero_disponible(usuario: str, dinero:int)->None:
     with open(archivo_csv, 'w', newline='') as archivo:
         escribir = csv.writer(archivo)
         escribir.writerows(datas)
-        archivo.close()
 
 def descontar_dinero(usuario:str, monto_descontar:int)->None:
     '''Recibe el id del usuario(mail) y el monto a descontar.
@@ -552,7 +528,6 @@ def descontar_dinero(usuario:str, monto_descontar:int)->None:
         leer = csv.reader(archivo)
         for fila in leer:
             datas.append(fila)
-        archivo.close()
     
     for data in datas:
         if(data[0] == usuario):
@@ -561,7 +536,6 @@ def descontar_dinero(usuario:str, monto_descontar:int)->None:
     with open(archivo_csv, 'w', newline='') as archivo:
         escribir = csv.writer(archivo)
         escribir.writerows(datas)
-        archivo.close()
 
 def existe_archivo(nombre_archivo:str)->bool:
     '''Recibe el nombre del archivo y devuelve un bool (True/False) si el archivo existe o no.'''
@@ -603,7 +577,7 @@ def guardar_transacciones(usuario:str, dinero:int, tipo:str)->None:
             escribir.writerows(datos)
     return
 
-def apostar_partido(codigo:int, fixtures:dict, usuario: str)->None:
+def apostar_partido(codigo:int, fixtures:dict, usuario: str, usuarios:dict)->None:
     '''Recibe el id del fixture, el dict de fixtures y el id del usuario (mail)
     El usuario apuesta por un partido con su dinero disponible y se le devuelve un mensaje con su situacion, 
     si gano o perdio lo apostado. En ambos casos se guarda la transaccion y se descuenta o se suma a su dinero en cuenta.'''
@@ -620,11 +594,12 @@ def apostar_partido(codigo:int, fixtures:dict, usuario: str)->None:
     while(apuesta[0] not in ['G', 'P', 'E', 'e', 'g', 'p']):
         apuesta = input("Debe ingresar su apuesta. GANA, PIERDE o EMPATA su equipo elegido (G/P/E): ")
 
-    dinero = dinero_disponible(usuario)
+    dinero = dinero_disponible(usuario, usuarios)
 
     if(dinero == 0):
         print("Usted no dispone de dinero para apostar.")
         print("Finalizo el programa")
+        fixtures.clear()
         return
 
     print(f"Usted tiene disponible {dinero}.")
@@ -652,10 +627,13 @@ def apostar_partido(codigo:int, fixtures:dict, usuario: str)->None:
         cargar_dinero_disponible(usuario, dinero_ganado)
         guardar_transacciones(usuario, dinero_ganado, 'Gana')
         print("Hemos cargado su dinero ganado correctamente!")
+        fixtures.clear()
+        return
     else: 
         descontar_dinero(usuario, monto)
         guardar_transacciones(usuario, - monto, 'Pierde')
         print("Hemos descontado de su dinero disponible lo apostado.")
+        fixtures.clear()
         return
     
 def listado_fixture(equipo: str, fixtures:dict, equipos:dict)->None:
@@ -698,7 +676,7 @@ def main():
             print("Registro de cuenta nueva.\n")
             crear_credenciales(users_dict)
             choice1 = input("\nDigite:\n'i' si desea ingresar a una cuenta existente,\n'r' si desea registrar una cuenta nueva,\n'Enter' si desea salir. ")
-            #faltaria agregar el "login"
+            #faltaria agregar el "login" para tener la variable user_online
         elif choice1 == "i":
             print("ingreso a cuenta existente.\n")
             user_online = buscar_credenciales(users_dict) #Almaceno el usuario conectado para tomarlo de referencia en operaciones posteriores.
@@ -738,7 +716,7 @@ def main():
     while opcion not in opciones:
         opcion = input("Ingrese una opcion valida: ")
     
-    while opcion != "h":
+    while opcion != "i":
         if opcion == "a":
             listar_equipos(equipos)
             mostrar_equipo(equipos)
@@ -771,11 +749,12 @@ def main():
 
             listado_fixture(equipo.upper(), fixtures, equipos)
 
+            if(len(fixtures) == 0):
+                print("No hay partidos para mostrarle.")
+
             while len(fixtures) > 0: 
                 codigo = elegir_partido(fixtures)
-                apostar_partido(codigo, fixtures, user_online)
-            print("No hay partidos para mostrarle.")
-            print(menu)
+                apostar_partido(codigo, fixtures, user_online, users_dict)
         print("")
         print(menu)
         print("")
